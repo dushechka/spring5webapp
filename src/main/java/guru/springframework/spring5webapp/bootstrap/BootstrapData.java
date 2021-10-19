@@ -24,27 +24,35 @@ public class BootstrapData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Author eric = new Author("Eric", "Evans");
-        Book ddd = new Book("Domain Driven Design", "12312321");
-        eric.getBooks().add(ddd);
-        ddd.getAuthors().add(eric);
-        authorRepository.save(eric);
-        bookRepository.save(ddd);
-
-        Author rod = new Author("Rod", "Johnson");
-        Book noEJB = new Book("J2EE Development Without EJB", "12346541536");
-        rod.getBooks().add(noEJB);
-        noEJB.getAuthors().add(rod);
-        authorRepository.save(rod);
-        bookRepository.save(noEJB);
 
         Publisher oriley = new Publisher();
         oriley.setName("O'Rilley");
         oriley.setAddress("Spb, Georgia, 123123");
         publisherRepository.save(oriley);
 
+        Author eric = new Author("Eric", "Evans");
+        Book ddd = new Book("Domain Driven Design", "12312321");
+        saveBookToRepository(oriley, eric, ddd);
+
+        Author rod = new Author("Rod", "Johnson");
+        Book noEJB = new Book("J2EE Development Without EJB", "12346541536");
+        saveBookToRepository(oriley, rod, noEJB);
+
         System.out.println("Started in Bootstrap");
         System.out.println("Number of books: " + bookRepository.count());
         System.out.println("Number of publishers: " + publisherRepository.count());
+        System.out.println("Number of books by O'Rilley: " + oriley.getBooks().size());
     }
+
+    private void saveBookToRepository(Publisher publisher, Author author, Book book) {
+        author.getBooks().add(book);
+        book.getAuthors().add(author);
+        publisher.getBooks().add(book);
+        book.setPublisher(publisher);
+        authorRepository.save(author);
+        bookRepository.save(book);
+        publisherRepository.save(publisher);
+    }
+
+
 }
